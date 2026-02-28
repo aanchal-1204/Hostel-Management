@@ -12,6 +12,22 @@ import {
   getResolvedComplaints,
   updateComplaintStatus
 } from "../controllers/adminController.js";
+
+
+import {
+  createAnnouncement,
+  getAllAnnouncements,
+  updateAnnouncement,
+  deleteAnnouncement,
+} from "../controllers/adminController.js";
+
+import {
+  getAllExtensionRequests,
+  approveExtensionRequest,
+  rejectExtensionRequest
+} from "../controllers/adminController.js";
+
+
 const router = express.Router();
 
 
@@ -32,5 +48,29 @@ router.get("/complaints/resolved", getResolvedComplaints);
 
 // Update complaint status
 router.put("/complaints/:id", updateComplaintStatus);
+
+
+
+// Announcement Routes
+
+router.post("/announcements", createAnnouncement);
+
+router.get("/announcements", getAllAnnouncements);
+
+router.put("/announcements/:id", updateAnnouncement);
+
+router.delete("/announcements/:id", deleteAnnouncement);
+
+
+// GET all extension requests
+router.get("/extensions", getAllExtensionRequests);
+
+
+// APPROVE extension
+router.put("/extensions/:id/approve", approveExtensionRequest);
+
+
+// REJECT extension
+router.put("/extensions/:id/reject", rejectExtensionRequest);
 
 export default router;

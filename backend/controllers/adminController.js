@@ -1,7 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../prismaClient.js";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
 
 
 // ✅ Add Student
@@ -338,4 +337,218 @@ export const updateComplaintStatus = async (req, res) => {
 
   }
 
+};
+
+
+
+
+
+
+
+
+
+
+// CREATE ANNOUNCEMENT
+export const createAnnouncement = async (req, res) => {
+  try {
+    const { title, description, hostelNo, createdById } = req.body;
+
+    const announcement = await prisma.announcement.create({
+      data: {
+        title,
+        description,
+        hostelNo,
+        createdById,
+      },
+    });
+
+    res.status(201).json({
+      message: "Announcement created successfully",
+      announcement,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error creating announcement" });
+  }
+};
+
+
+
+// GET ALL ANNOUNCEMENTS
+export const getAllAnnouncements = async (req, res) => {
+  try {
+    const announcements = await prisma.announcement.findMany({
+      include: {
+        createdBy: {
+          select: {
+            id: true,
+            name: true,
+            hostelNo: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.status(200).json(announcements);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching announcements" });
+  }
+};
+
+
+
+// UPDATE ANNOUNCEMENT
+export const updateAnnouncement = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { title, description, hostelNo } = req.body;
+
+    const announcement = await prisma.announcement.update({
+      where: { id },
+      data: {
+        title,
+        description,
+        hostelNo,
+      },
+    });
+
+    res.status(200).json({
+      message: "Announcement updated successfully",
+      announcement,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error updating announcement" });
+  }
+};
+
+
+
+// DELETE ANNOUNCEMENT
+export const deleteAnnouncement = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    await prisma.announcement.delete({
+      where: { id },
+    });
+
+    res.status(200).json({
+      message: "Announcement deleted successfully",
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error deleting announcement" });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+// GET all extension requests (Admin)
+export const getAllExtensionRequests = async (req, res) => {
+  try {
+
+    const requests = await prisma.extensionRequest.findMany({
+
+      include: {
+        student: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            roomNumber: true,
+          }
+        }
+      },
+
+      orderBy: {
+        createdAt: "desc"
+      }
+
+    });
+
+    res.status(200).json(requests);
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching extension requests"
+    });
+  }
+};
+
+
+
+// APPROVE extension request
+export const approveExtensionRequest = async (req, res) => {
+
+  try {
+
+    const requestId = Number(req.params.id);
+
+    const updatedRequest = await prisma.extensionRequest.update({
+
+      where: { id: requestId },
+
+      data: {
+        status: "approved"
+      }
+
+    });
+
+    res.status(200).json({
+      message: "Extension request approved",
+      updatedRequest
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error approving extension request"
+    });
+  }
+};
+
+
+
+// REJECT extension request
+export const rejectExtensionRequest = async (req, res) => {
+
+  try {
+
+    const requestId = Number(req.params.id);
+
+    const updatedRequest = await prisma.extensionRequest.update({
+
+      where: { id: requestId },
+
+      data: {
+        status: "rejected"
+      }
+
+    });
+
+    res.status(200).json({
+      message: "Extension request rejected",
+      updatedRequest
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error rejecting extension request"
+    });
+  }
 };
