@@ -13,7 +13,7 @@ import { authorizeRoles, protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 router.use(protect);
-router.use(authorizeRoles("student"));
+router.use(authorizeRoles("STUDENT"));
 
 router.get("/dashboard", getStudentDashboard);
 router.get("/profile", getStudentProfile);

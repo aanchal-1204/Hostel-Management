@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 const generateAccessToken = (user) => {
   return jwt.sign(
-    { id: user.id, role: user.role },
+    { id, role},
     process.env.JWT_SECRET,
     { expiresIn: "15m" }
   );
@@ -12,7 +12,7 @@ const generateAccessToken = (user) => {
 
 const generateRefreshToken = (user) => {
   return jwt.sign(
-    { id: user.id },
+    { id,role},
     process.env.JWT_REFRESH_SECRET,
     { expiresIn: "7d" }
   );
@@ -42,16 +42,29 @@ export const registerStudent = async (req, res) => {
       LgAddress,
     } = req.body;
 
-    const existing = await prisma.student.findUnique({
+     if (!name || !email || !password || !enrollmentNo) {
+      return res.status(400).json({
+        message: "Name, email, password and enrollment number are required",
+      });
+    }
+
+    const existingEmail = await prisma.student.findUnique({
       where: { email },
     });
 
-    if (existing)
+    if (existingEmail)
       return res.status(400).json({ message: "Email already exists" });
+
+    const existingEnrollment = await prisma.student.findUnique({
+  where: { enrollmentNo },
+});
+
+if (existingEnrollment)
+  return res.status(400).json({ message: "Enrollment number already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.student.create({
+    await prisma.student.create({
       data: {
         name,
         email,
@@ -70,15 +83,15 @@ export const registerStudent = async (req, res) => {
         LgName,
         LgNumber,
         LgAddress,
-        role: "STUDENT",
       },
     });
 
     res.status(201).json({
       message: "Student registered successfully",
     });
-  } catch (err) {
-    console.error(err);
+
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Registration failed" });
   }
 };
@@ -86,52 +99,44 @@ export const registerStudent = async (req, res) => {
 // ================= LOGIN =================
 export const login = async (req, res) => {
   try {
-    const { id, password } = req.body;
+    const { userId, password } = req.body;
 
-    if (!id || !password) {
-      return res.status(400).json({ message: "ID and password required" });
+    if (!userId || !password) {
+      return res.status(400).json({ message: "UserId and password required" });
     }
 
     let user = null;
     let role = null;
 
-    // 1️⃣ Check Student
+    // 🔹 1️⃣ Try Student (enrollmentNo)
     user = await prisma.student.findUnique({
-      where: { id: Number(id) },
+      where: { enrollmentNo: userId },
     });
 
     if (user) {
       role = "STUDENT";
     } else {
-      // 2️⃣ Check Admin
+      // 🔹 2️⃣ Try Admin (adminCode)
       user = await prisma.admin.findUnique({
-        where: { id: Number(id) },
+        where: { adminCode: userId },
       });
 
       if (user) role = "ADMIN";
     }
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid ID or password" });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
-      return res.status(400).json({ message: "Invalid ID or password" });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const accessToken = jwt.sign(
-      { id: user.id, role },
-      process.env.JWT_SECRET,
-      { expiresIn: "15m" }
-    );
+    const accessToken = generateAccessToken(user.id, role);
 
-    const refreshToken = jwt.sign(
-      { id: user.id, role },
-      process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "7d" }
-    );
+    const refreshToken = generateRefreshToken(user.id, role);
 
     res.status(200).json({
       accessToken,
@@ -157,7 +162,7 @@ export const refreshAccessToken = (req, res) => {
       return res.status(403).json({ message: "Invalid refresh token" });
 
     const newAccessToken = jwt.sign(
-      { id: decoded.id },
+      { id: decoded.id , role: decoded.role},
       process.env.JWT_SECRET,
       { expiresIn: "15m" }
     );
