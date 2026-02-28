@@ -63,7 +63,6 @@ export const getAnnouncements = async (req, res) => {
 };
 
 //  COMPLAINT SECTION
-
 // Submit Complaint
 export const submitComplaint = async (req, res) => {
   try {
