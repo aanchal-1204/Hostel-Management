@@ -11,7 +11,7 @@ datasource db {
 
 
 model Student {
-  
+  id             Int       @id @default(autoincrement()) 
   name           String
   email          String    @unique
   password       String
@@ -20,7 +20,7 @@ model Student {
 
   profilePic     String?
 
-  enrollmentNo   String?   @unique
+  enrollmentNo   String   @unique
   course         String?
   branch         String?
   year           Int?
@@ -33,9 +33,9 @@ model Student {
   permanentAddress String?
 
   parentName     String?
-  parentNumber    Int?
+  parentNumber    String?
   LgName         String?
-  LgNumber         Int?
+  LgNumber         String?
   LgAddress      String?
 
   createdAt      DateTime  @default(now())
@@ -50,6 +50,7 @@ model Student {
 
 
 model Admin {
+   id        Int      @id @default(autoincrement()) 
   name      String
   email     String   @unique
   adminCode String   @unique

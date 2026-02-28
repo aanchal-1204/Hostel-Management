@@ -1,12 +1,22 @@
 
-//  STUDENT DASHBOARD
+// STUDENT DASHBOARD
 export const getStudentDashboard = async (req, res) => {
   try {
     const studentId = req.user.id;
 
-    const fee = await prisma.fee.findFirst({
+    const fees = await prisma.fee.findMany({
       where: { studentId },
-    });   
+    });
+
+    const totalFees = fees.reduce((sum, fee) => sum + fee.amount, 0);
+
+    const paidFees = fees
+      .filter(fee => fee.status === "paid")
+      .reduce((sum, fee) => sum + fee.amount, 0);
+
+    const pendingFees = fees
+      .filter(fee => fee.status === "pending")
+      .reduce((sum, fee) => sum + fee.amount, 0);
 
     const complaintsCount = await prisma.complaint.count({
       where: { studentId },
@@ -15,23 +25,22 @@ export const getStudentDashboard = async (req, res) => {
     const announcementsCount = await prisma.announcement.count();
 
     res.status(200).json({
-      totalFees: fee?.total || 0,
-      paidFees: fee?.paid || 0,
-      pendingFees: fee?.pending || 0,
+      totalFees,
+      paidFees,
+      pendingFees,
       complaintsCount,
       announcementsCount,
     });
+
   } catch (error) {
     res.status(500).json({ message: "Error loading dashboard" });
   }
 };
 
-
-
 //  STUDENT PROFILE
 export const getStudentProfile = async (req, res) => {
   try {
-    const studentId = Number(req.params.id);
+    const studentId = req.user.id;
 
     const student = await prisma.student.findUnique({
       where: { id: studentId },
@@ -39,6 +48,7 @@ export const getStudentProfile = async (req, res) => {
         id: true,
         name: true,
         email: true,
+        enrollmentNo: true,
         roomNumber: true,
         course: true,
         year: true,
@@ -51,32 +61,11 @@ export const getStudentProfile = async (req, res) => {
     }
 
     res.status(200).json(student);
+
   } catch (error) {
     res.status(500).json({ message: "Error fetching profile" });
   }
 };
-
-
-// FEES SECTION
-export const getStudentFees = async (req, res) => {
-  try {
-    const studentId = Number(req.params.id);
-
-    const fee = await prisma.fee.findFirst({
-      where: { studentId },
-    });
-
-    if (!fee) {
-      return res.status(404).json({ message: "Fees record not found" });
-    }
-
-    res.status(200).json(fee);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching fees data" });
-  }
-};
-
-
 
 //ANNOUNCEMENTS
 export const getAnnouncements = async (req, res) => {
@@ -91,14 +80,12 @@ export const getAnnouncements = async (req, res) => {
   }
 };
 
-
-
 //  COMPLAINT SECTION
 
 // Submit Complaint
 export const submitComplaint = async (req, res) => {
   try {
-    const studentId = Number(req.params.id);
+    const studentId = req.user.id;
     const { title, description } = req.body;
 
     const complaint = await prisma.complaint.create({
@@ -118,11 +105,10 @@ export const submitComplaint = async (req, res) => {
   }
 };
 
-
 // Get Student Complaints
 export const getStudentComplaints = async (req, res) => {
   try {
-    const studentId = Number(req.params.id);
+    const studentId = req.user.id;
 
     const complaints = await prisma.complaint.findMany({
       where: { studentId },
@@ -135,15 +121,12 @@ export const getStudentComplaints = async (req, res) => {
   }
 };
 
-
-
-
 // EXTENSION REQUEST
 
 // Submit Extension Request
 export const submitExtensionRequest = async (req, res) => {
   try {
-    const studentId = Number(req.params.id);
+    const studentId = req.user.id;
     const { reason, tillDate } = req.body;
 
     const extension = await prisma.extensionRequest.create({
@@ -167,7 +150,7 @@ export const submitExtensionRequest = async (req, res) => {
 // Get Student Extension Requests
 export const getExtensionRequests = async (req, res) => {
   try {
-    const studentId = Number(req.params.id);
+    const studentId = req.user.id;
 
     const requests = await prisma.extensionRequest.findMany({
       where: { studentId },
