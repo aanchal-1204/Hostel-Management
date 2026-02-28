@@ -3,21 +3,6 @@
 export const getStudentDashboard = async (req, res) => {
   try {
     const studentId = req.user.id;
-
-    const fees = await prisma.fee.findMany({
-      where: { studentId },
-    });
-
-    const totalFees = fees.reduce((sum, fee) => sum + fee.amount, 0);
-
-    const paidFees = fees
-      .filter(fee => fee.status === "paid")
-      .reduce((sum, fee) => sum + fee.amount, 0);
-
-    const pendingFees = fees
-      .filter(fee => fee.status === "pending")
-      .reduce((sum, fee) => sum + fee.amount, 0);
-
     const complaintsCount = await prisma.complaint.count({
       where: { studentId },
     });
@@ -25,9 +10,6 @@ export const getStudentDashboard = async (req, res) => {
     const announcementsCount = await prisma.announcement.count();
 
     res.status(200).json({
-      totalFees,
-      paidFees,
-      pendingFees,
       complaintsCount,
       announcementsCount,
     });
