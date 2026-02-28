@@ -9,18 +9,21 @@ import {
   submitExtensionRequest,
   getExtensionRequests,
 } from "../controllers/studentController.js";
+import { authorizeRoles, protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+router.use(protect);
+router.use(authorizeRoles("student"));
 
-router.get("/dashboard/:id", getStudentDashboard);
-router.get("/profile/:id", getStudentProfile);
-router.get("/fees/:id", getStudentFees);
+router.get("/dashboard", getStudentDashboard);
+router.get("/profile", getStudentProfile);
+router.get("/fees", getStudentFees);
 router.get("/announcements", getAnnouncements);
 
 router.post("/complaint", submitComplaint);
 router.get("/complaint/:id", getStudentComplaints);
 
 router.post("/extension", submitExtensionRequest);
-router.get("/extension/:id", getExtensionRequests);
+router.get("/extension", getExtensionRequests);
 
 export default router;
