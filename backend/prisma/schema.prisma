@@ -1,0 +1,142 @@
+// Prisma Client Generator
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Database
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Student {
+  id             Int       @id @default(autoincrement())
+
+  name           String
+  email          String    @unique
+  password       String
+
+  enrollmentNo   String?   @unique
+  course         String?
+  branch         String?
+  year           Int?
+  semester       Int?
+
+  roomNumber     String?
+  hostelNo       String?
+
+  contact        String?
+  permanentAddress String?
+
+  parentName     String?
+  parentNumber    Int?
+  LgName         String?
+  LgNumber         Int?
+  LgAddress      String?
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relations
+  fees           Fee[]
+  complaints     Complaint[]
+  extensions     ExtensionRequest[]
+}
+
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  number    String?
+  hostelNo  String?
+  password  String
+
+  announcements Announcement[]
+
+  createdAt DateTime @default(now())
+}
+
+
+model Announcement {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+
+  hostelNo    String?        // If hostel-specific
+  createdById Int
+  createdBy   Admin   @relation(fields: [createdById], references: [id])
+
+  createdAt   DateTime @default(now())
+}
+
+
+model Complaint {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+
+  status      ComplaintStatus @default(pending)
+
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
+
+  studentId   Int
+  student     Student @relation(fields: [studentId], references: [id])
+}
+
+enum ComplaintStatus {
+  pending
+  in_progress
+  resolved
+}
+
+
+model Fee {
+  id          Int      @id @default(autoincrement())
+
+  studentId   Int
+  student     Student @relation(fields: [studentId], references: [id])
+
+  amount      Float
+  feeType     FeeType
+  status      FeeStatus @default(pending)
+
+  dueDate     DateTime
+  paidAt      DateTime?
+
+  createdAt   DateTime @default(now())
+}
+
+enum FeeType {
+  hostel
+  mess
+  other
+}
+
+enum FeeStatus {
+  pending
+  paid
+  overdue
+}
+
+
+model ExtensionRequest {
+  id        Int      @id @default(autoincrement())
+  reason    String
+  tillDate  DateTime
+
+  status    ExtensionStatus @default(pending)
+
+  createdAt DateTime @default(now())
+
+  studentId Int
+  student   Student @relation(fields: [studentId], references: [id])
+}
+
+enum ExtensionStatus {
+  pending 
+  approved
+  rejected
+}
