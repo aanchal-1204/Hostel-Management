@@ -2,11 +2,11 @@
 //  STUDENT DASHBOARD
 export const getStudentDashboard = async (req, res) => {
   try {
-    const studentId = Number(req.params.id);
+    const studentId = req.user.id;
 
     const fee = await prisma.fee.findFirst({
       where: { studentId },
-    });
+    });   
 
     const complaintsCount = await prisma.complaint.count({
       where: { studentId },
