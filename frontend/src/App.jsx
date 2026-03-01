@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Routes, Route } from "react-router-dom";
 import React, { useState } from 'react'
 import Dashboard from './Dashboard.jsx'
@@ -6,7 +6,7 @@ import StudentDashboard from './pages/student/StudentDashboard.jsx'
 
 import LoginPage from './Login.jsx'
 
-import Dashboard from "./pages/admin/Dashboard";
+
 import Students from "./pages/admin/Students";
 import Complaints from "./pages/admin/Complaints";
 
