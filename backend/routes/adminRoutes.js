@@ -27,6 +27,7 @@ import {
   approveExtensionRequest,
   rejectExtensionRequest
 } from "../controllers/adminController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 
 const router = express.Router();
