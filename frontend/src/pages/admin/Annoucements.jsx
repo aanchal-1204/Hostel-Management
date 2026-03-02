@@ -1,123 +1,128 @@
 import React, { useEffect, useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import {
-  createAnnouncement,
-  getAllAnnouncements,
+    createAnnouncement,
+    getAllAnnouncements,
 } from "../../services/adminApi";
 
 const Announcements = () => {
-  const [announcements, setAnnouncements] = useState([]);
-  const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+    const [announcements, setAnnouncements] = useState([]);
+    const [title, setTitle] = useState("");
+    const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchAnnouncements();
-  }, []);
+    useEffect(() => {
+        fetchAnnouncements();
+    }, []);
 
-  const fetchAnnouncements = async () => {
-    try {
-      const res = await getAllAnnouncements();
+    const fetchAnnouncements = async () => {
+        try {
+            const res = await getAllAnnouncements();
 
-      const data = Array.isArray(res.data)
-        ? res.data
-        : res.data.announcements || [];
+            const data = Array.isArray(res.data)
+                ? res.data
+                : res.data.announcements || [];
 
-      setAnnouncements(data);
-    } catch (error) {
-      console.error("Error fetching announcements", error);
-      setAnnouncements([]);
-    }
-  };
+            setAnnouncements(data);
+        } catch (error) {
+            console.error("Error fetching announcements", error);
+            setAnnouncements([]);
+        }
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    if (!title || !message) return;
+        if (!title || !message) return;
 
-    try {
-      setLoading(true);
+        const admin = JSON.parse(localStorage.getItem("user"));
 
-      await createAnnouncement({ title, message });
+        try {
+            setLoading(true);
 
-      setTitle("");
-      setMessage("");
-      fetchAnnouncements();
-    } catch (error) {
-      console.error("Error creating announcement", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+            await createAnnouncement({
+                title,
+                description: message
+            });
 
-  return (
-    <AdminLayout>
-      <h1 className="text-2xl font-semibold mb-6">
-        📢 Manage Announcements
-      </h1>
+            setTitle("");
+            setMessage("");
+            fetchAnnouncements();
+        } catch (error) {
+            console.error("Error creating announcement", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      {/* Create Form */}
-      <div className="bg-white shadow rounded p-6 mb-8">
-        <h2 className="text-lg font-semibold mb-4">
-          Create New Announcement
-        </h2>
+    return (
+        <AdminLayout>
+            <h1 className="text-2xl font-semibold mb-6">
+                📢 Manage Announcements
+            </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Announcement Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-          />
+            {/* Create Form */}
+            <div className="bg-white shadow rounded p-6 mb-8">
+                <h2 className="text-lg font-semibold mb-4">
+                    Create New Announcement
+                </h2>
 
-          <textarea
-            placeholder="Announcement Message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-            rows="4"
-          />
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <input
+                        type="text"
+                        placeholder="Announcement Title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className="w-full border px-3 py-2 rounded"
+                    />
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            {loading ? "Creating..." : "Create Announcement"}
-          </button>
-        </form>
-      </div>
+                    <textarea
+                        placeholder="Announcement Message"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        className="w-full border px-3 py-2 rounded"
+                        rows="4"
+                    />
 
-      {/* Announcement List */}
-      <div className="bg-white shadow rounded p-6">
-        <h2 className="text-lg font-semibold mb-4">
-          Previous Announcements
-        </h2>
-
-        {announcements.length === 0 ? (
-          <p className="text-gray-500">No announcements yet.</p>
-        ) : (
-          announcements.map((a) => (
-            <div
-              key={a._id}
-              className="border-b py-4"
-            >
-              <h3 className="font-semibold text-lg">
-                {a.title}
-              </h3>
-              <p className="text-gray-600 mt-1">
-                {a.message}
-              </p>
-              <p className="text-sm text-gray-400 mt-2">
-                {new Date(a.createdAt).toLocaleString()}
-              </p>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    >
+                        {loading ? "Creating..." : "Create Announcement"}
+                    </button>
+                </form>
             </div>
-          ))
-        )}
-      </div>
-    </AdminLayout>
-  );
+
+            {/* Announcement List */}
+            <div className="bg-white shadow rounded p-6">
+                <h2 className="text-lg font-semibold mb-4">
+                    Previous Announcements
+                </h2>
+
+                {announcements.length === 0 ? (
+                    <p className="text-gray-500">No announcements yet.</p>
+                ) : (
+                    announcements.map((a) => (
+                        <div
+                            key={a.id}
+                            className="border-b py-4"
+                        >
+                            <h3 className="font-semibold text-lg">
+                                {a.title}
+                            </h3>
+                            <p className="text-gray-600 mt-1">
+                                {a.description}
+                            </p>
+                            <p className="text-sm text-gray-400 mt-2">
+                                {new Date(a.createdAt).toLocaleString()}
+                            </p>
+                        </div>
+                    ))
+                )}
+            </div>
+        </AdminLayout>
+    );
 };
 
 export default Announcements;

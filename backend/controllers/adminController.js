@@ -387,15 +387,24 @@ export const updateComplaintStatus = async (req, res) => {
 // CREATE ANNOUNCEMENT
 export const createAnnouncement = async (req, res) => {
   try {
-    const { title, description, hostelNo, createdById } = req.body;
+    const { title, description } = req.body;
+
+    // fetch logged-in admin from DB
+    const admin = await prisma.admin.findUnique({
+      where: { id: req.user.id }
+    });
+
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
 
     const announcement = await prisma.announcement.create({
       data: {
         title,
         description,
-        hostelNo,
-        createdById,
-      },
+        hostelNo: admin.hostelNo,
+        createdById: admin.id
+      }
     });
 
     res.status(201).json({
@@ -404,7 +413,7 @@ export const createAnnouncement = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("Create announcement error:", error);
     res.status(500).json({ message: "Error creating announcement" });
   }
 };
