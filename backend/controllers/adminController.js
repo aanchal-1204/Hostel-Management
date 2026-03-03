@@ -129,7 +129,8 @@ export const getVerifiedStudents = async (req, res) => {
         branch: true,
         semester: true,
         roomNumber: true,
-        hostelNo: true
+        hostelNo: true,
+         enrollmentNo: true 
       }
 
     });

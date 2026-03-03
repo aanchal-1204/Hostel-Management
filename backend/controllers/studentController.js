@@ -12,7 +12,7 @@ export const getStudentDashboard = async (req, res) => {
         name: true,
         email: true,
         enrollmentNo: true,
-        course: true,
+        branch: true,
         year: true,
         roomNumber: true,
         hostelNo: true,
@@ -67,7 +67,7 @@ export const getStudentDashboard = async (req, res) => {
       basicInfo: {
         enrollmentNo: student.enrollmentNo,
         email: student.email,
-        course: student.course,
+        branch: student.branch,
         year: student.year,
         roomNumber: student.roomNumber,
         hostelNo: student.hostelNo,

@@ -41,12 +41,6 @@ const Navbar = ({ role }) => {
           </Link>
         )}
 
-        {/* <Link
-          to={`/${basePath}/rooms`}
-          className="hover:text-gray-200 transition"
-        >
-          Rooms
-        </Link> */}
 
         {role === "ADMIN" && (
           <Link

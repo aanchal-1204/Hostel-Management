@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
 const Complaint = () => {
@@ -26,16 +26,17 @@ const Complaint = () => {
     }
 
     try {
-      const res = await axios.get(
-        "/api/students/complaint",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await API.get("/students/complaints");
 
-      setComplaints(res.data);
+      const data = res.data;
+
+if (Array.isArray(data)) {
+  setComplaints(data);
+} else if (Array.isArray(data.complaints)) {
+  setComplaints(data.complaints);
+} else {
+  setComplaints([]);
+}
     } catch (err) {
       console.error("Error fetching complaints");
     }
@@ -67,15 +68,7 @@ const Complaint = () => {
     setLoading(true);
 
     try {
-      await axios.post(
-        "/api/students/complaint",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await await API.post("/students/complaints", formData);
 
       setMessage("Complaint submitted successfully.");
       setFormData({ title: "", description: "" });

@@ -18,7 +18,7 @@ router.get("/dashboard", getStudentDashboard);
 router.get("/profile", getStudentProfile);
 router.get("/announcements", getAnnouncements);
 
-router.post("/complaint", submitComplaint);
+router.post("/complaints", submitComplaint);
 // router.get("/complaint/:id", getStudentComplaints);
 
 router.post("/extensionRequest", submitExtensionRequest);

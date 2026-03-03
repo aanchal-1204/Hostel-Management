@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../../services/api.js";
 import { useNavigate } from "react-router-dom";
+import StudentLayout from "../../layouts/StudentLayout";
 
 const StudentDashboard = () => {
 
@@ -62,7 +63,7 @@ const StudentDashboard = () => {
 
 
   return (
-
+    <StudentLayout>
     <div className="min-h-screen bg-gray-100 p-6">
 
       {/* Header */}
@@ -84,7 +85,7 @@ const StudentDashboard = () => {
 
         <Card title="Room Number" value={data.basicInfo?.roomNumber} />
 
-        <Card title="Course" value={data.basicInfo?.course} />
+        <Card title="Branch" value={data.basicInfo?.branch} />
 
         <Card title="Year" value={`${data.basicInfo?.year || ""} Year`} />
 
@@ -191,9 +192,8 @@ const StudentDashboard = () => {
       </div>
 
     </div>
-
-  );
-
+      </StudentLayout>
+  )
 };
 
 

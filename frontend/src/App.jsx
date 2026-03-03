@@ -13,6 +13,7 @@ import AddStudent from "./pages/admin/AddStudent.jsx";
 import Complaints from "./pages/admin/Complaints.jsx";
 import Announcements from "./pages/admin/Annoucements.jsx";
 import Login from "./Login.jsx";
+import Complaint from "./pages/student/Complaint.jsx";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
       <Route path="/" element={<Dashboard />} />
       <Route path="/login" element={<Login />} />
       <Route path="/student/dashboard" element={<StudentDashboard />} />
+      <Route path="/student/complaints" element={<Complaint />} />
           <Route path="/student/announcements" element={<StudentAnnouncements />} />
           <Route path="/student/extensionRequest" element={<ExtensionRequest />} />
          <Route path="/admin/dashboard" element={<AdminDashboard />} /> */
