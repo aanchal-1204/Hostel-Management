@@ -48,14 +48,14 @@ const Navbar = ({ role }) => {
           Rooms
         </Link> */}
 
-        {/* {role === "ADMIN" && (
+        {role === "ADMIN" && (
           <Link
-            to="/admin/fees"
+            to="/admin/add-student"
             className="hover:text-gray-200 transition"
           >
-            Fees
+            Add Student
           </Link>
-        )} */}
+        )}
 
         <Link
           to={`/${basePath}/complaints`}

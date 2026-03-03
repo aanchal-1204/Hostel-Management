@@ -1,6 +1,9 @@
 import jwt from "jsonwebtoken";
 
 export const protect = (req, res, next) => {
+   console.log("METHOD:", req.method, "PATH:", req.originalUrl);
+console.log("AUTH HEADER:", req.headers.authorization);
+
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer "))

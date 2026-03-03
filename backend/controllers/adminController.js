@@ -54,6 +54,7 @@ export const addStudent = async (req, res) => {
       enrollmentNo,
       contact
     } = req.body;
+    const parsedSemester = semester ? Number(semester) : null;
 
 
     // Check if student exists
@@ -80,12 +81,11 @@ export const addStudent = async (req, res) => {
         email,
         password: hashedPassword,
         branch,
-        semester,
+        semester:parsedSemester,
         roomNumber,
         hostelNo,
         enrollmentNo,
         contact,
-        role: "STUDENT",
         isVerified: true
       }
     });

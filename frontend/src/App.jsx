@@ -9,6 +9,7 @@ import ExtensionRequest from "./pages/student/ExtensionRequest.jsx";
 // Admin pages
 import Students from "./pages/admin/Students.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
+import AddStudent from "./pages/admin/AddStudent.jsx";
 import Complaints from "./pages/admin/Complaints.jsx";
 import Announcements from "./pages/admin/Annoucements.jsx";
 import Login from "./Login.jsx";
@@ -21,6 +22,7 @@ function App() {
 
       <Route path="/admin/students" element={<Students />} />
       <Route path="/admin/announcements" element={<Announcements />} />
+        <Route path="/admin/add-student" element={<AddStudent />} />
 
       <Route path="/admin/complaints" element={<Complaints />} />
       <Route path="/" element={<Dashboard />} />

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "./services/api";
+import { jwtDecode } from "jwt-decode";
 
 function Login() {
   const navigate = useNavigate();
@@ -17,67 +19,61 @@ function Login() {
     const token = localStorage.getItem("accessToken");
     const role = localStorage.getItem("role");
 
-    if (token && role === "STUDENT") {
-      navigate("/student/dashboard");
+    if (token) {
+    const decoded = jwtDecode(token);
+
+    if (decoded.exp * 1000 > Date.now()) {
+      if (role === "ADMIN") navigate("/admin/dashboard");
+      if (role === "STUDENT") navigate("/student/dashboard");
+    } else {
+      localStorage.clear();
     }
-    if (token && role === "ADMIN") {
+  }
+}, []);
+  const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!formData.userId || !formData.password) {
+    setError("All fields are required");
+    return;
+  }
+
+  setError("");
+  setLoading(true);
+
+  try {
+    const response = await API.post("/auth/login", formData);
+
+    const data = response.data;
+
+    // Save tokens
+    localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("refreshToken", data.refreshToken);
+    localStorage.setItem("role", data.role);
+
+    // Redirect
+    if (data.role === "STUDENT") {
+      navigate("/student/dashboard");
+    } else if (data.role === "ADMIN") {
       navigate("/admin/dashboard");
     }
-  }, [navigate]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!formData.userId || !formData.password) {
-      setError("All fields are required");
-      return;
-    }
-
-    setError("");
-    setLoading(true);
-
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-
-      // ✅ Save tokens
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
-      localStorage.setItem("role", data.role);
-
-      // ✅ Redirect based on role
-      if (data.role === "STUDENT") {
-        navigate("/student/dashboard");
-      } else if (data.role === "ADMIN") {
-        navigate("/admin/dashboard");
-      } else {
-        setError("Invalid role received from server");
-      }
-
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (err) {
+    setError(
+      err.response?.data?.message || "Login failed. Please try again."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-r from-blue-900 to-blue-600 px-4">

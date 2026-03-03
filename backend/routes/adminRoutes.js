@@ -36,7 +36,6 @@ router.use(protect); // Protect all routes below
 
 // Add student
 router.post("/add-student", addStudent);
-
 router.get("/dashboard", getDashboardStats);
 
 

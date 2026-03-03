@@ -1,3 +1,4 @@
+import prisma from "../prismaClient.js";
 
 // STUDENT DASHBOARD
 export const getStudentDashboard = async (req, res) => {
