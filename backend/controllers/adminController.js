@@ -12,18 +12,11 @@ export const getDashboardStats = async (req, res) => {
 
     const pendingComplaints = await prisma.complaint.count({
       where: {
-        status: {
-          in: ["pending", "in_progress"]
-        }
+        status: { in: ["pending", "in_progress"] }
       }
     });
 
-   const rooms = await prisma.student.findMany({
-  distinct: ['roomNumber'],
-  select: { roomNumber: true }
-});
-
-const totalRooms = rooms.length;
+    const totalRooms = await prisma.room.count();
 
     res.status(200).json({
       totalStudents,
@@ -33,11 +26,58 @@ const totalRooms = rooms.length;
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      message: "Error fetching dashboard data"
-    });
+    res.status(500).json({ message: "Error fetching dashboard data" });
   }
 };
+
+//get all students
+export const getAllStudents = async (req, res) => {
+  try {
+    const students = await prisma.student.findMany({
+      include: {
+        room: {
+          select: {
+            roomNumber: true,
+            hostelNo: true,
+          }
+        }
+      }
+    });
+
+    res.status(200).json({ students });
+
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching students" });
+  }
+};
+
+//assign room to student
+export const assignRoomToStudent = async (req, res) => {
+  try {
+    const { studentId, roomId } = req.body;
+
+    const updatedStudent = await prisma.student.update({
+      where: { id: Number(studentId) },
+      data: {
+        roomId: Number(roomId),
+      },
+      include: {
+        room: true,
+      }
+    });
+
+    res.status(200).json({
+      message: "Room assigned successfully",
+      student: updatedStudent,
+    });
+
+  } catch (error) {
+    console.error("ASSIGN ROOM ERROR:", error);
+    res.status(500).json({ message: "Error assigning room" });
+  }
+};
+
+
 
 // ✅ Add Student
 export const addStudent = async (req, res) => {
@@ -49,15 +89,15 @@ export const addStudent = async (req, res) => {
       password,
       branch,
       semester,
-      roomNumber,
-      hostelNo,
+      roomId,
       enrollmentNo,
       contact
     } = req.body;
+
     const parsedSemester = semester ? Number(semester) : null;
+    const parsedRoomId = roomId ? Number(roomId) : null;
 
-
-    // Check if student exists
+    // Check existing
     const existingStudent = await prisma.student.findUnique({
       where: { email }
     });
@@ -69,27 +109,21 @@ export const addStudent = async (req, res) => {
       });
     }
 
-
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-
-    // Create student
     const student = await prisma.student.create({
       data: {
         name,
         email,
         password: hashedPassword,
         branch,
-        semester:parsedSemester,
-        roomNumber,
-        hostelNo,
+        semester: parsedSemester,
+        roomId: parsedRoomId,
         enrollmentNo,
         contact,
         isVerified: true
       }
     });
-
 
     res.status(201).json({
       success: true,
@@ -98,41 +132,53 @@ export const addStudent = async (req, res) => {
     });
 
   } catch (error) {
-
-    console.error(error);
-
+    console.error("ADD STUDENT ERROR:", error);
     res.status(500).json({
       success: false,
       message: "Server error"
     });
+  }
+};
 
+// vacant rooms 
+  export const getVacantRooms = async (req, res) => {
+  try {
+    const rooms = await prisma.room.findMany({
+      include: {
+        _count: {
+          select: { students: true }
+        }
+      }
+    });
+
+    const vacantRooms = rooms.filter(
+      room => room._count.students < room.capacity
+    );
+
+    res.json({ rooms: vacantRooms });
+
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching rooms" });
   }
 };
 
 
-
 // ✅ Get Verified Students
 export const getVerifiedStudents = async (req, res) => {
-
   try {
 
     const students = await prisma.student.findMany({
+      where: { isVerified: true },
 
-      where: {
-        isVerified: true
-      },
-
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        branch: true,
-        semester: true,
-        roomNumber: true,
-        hostelNo: true,
-         enrollmentNo: true 
+      include: {
+        room: {
+          select: {
+            id: true,
+            roomNumber: true,
+            hostelNo: true
+          }
+        }
       }
-
     });
 
     res.status(200).json({
@@ -141,66 +187,40 @@ export const getVerifiedStudents = async (req, res) => {
     });
 
   } catch (error) {
-
     console.error(error);
-
     res.status(500).json({
       success: false,
       message: "Server error"
     });
-
   }
-
 };
 
 
 
+// GET ALL 
 
-
-
-
-
-
-
-
-
-
-
-/*
-========================================
-GET ALL COMPLAINTS
-/api/admin/complaints
-========================================
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-
-/*
-====================================
-GET ALL COMPLAINTS
-====================================
-*/
 export const getAllComplaints = async (req, res) => {
   try {
 
     const complaints = await prisma.complaint.findMany({
-
       include: {
         student: {
           select: {
             id: true,
             name: true,
             email: true,
-            roomNumber: true
+            room: {
+              select: {
+                roomNumber: true,
+                hostelNo: true
+              }
+            }
           }
         }
       },
-
       orderBy: {
         createdAt: "desc"
       }
-
     });
 
     res.status(200).json({
@@ -209,24 +229,19 @@ export const getAllComplaints = async (req, res) => {
     });
 
   } catch (error) {
-
-    console.error(error);
-
+    console.error("COMPLAINT FETCH ERROR:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching complaints"
     });
-
   }
 };
-
 
 
 /*
 ====================================
 GET ACTIVE COMPLAINTS
-pending + in_progress
-====================================
+
 */
 export const getActiveComplaints = async (req, res) => {
 
@@ -244,7 +259,9 @@ export const getActiveComplaints = async (req, res) => {
         student: {
           select: {
             name: true,
-            roomNumber: true
+            room: {
+  select: { roomNumber: true }
+}
           }
         }
       },
@@ -293,7 +310,9 @@ export const getResolvedComplaints = async (req, res) => {
         student: {
           select: {
             name: true,
-            roomNumber: true
+            room: {
+  select: { roomNumber: true }
+}
           }
         }
       }

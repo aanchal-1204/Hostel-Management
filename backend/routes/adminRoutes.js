@@ -2,7 +2,9 @@ import express from "express";
 
 import {
   addStudent,
+  assignRoomToStudent,
   getDashboardStats,
+  getVacantRooms,
   getVerifiedStudents
 } from "../controllers/adminController.js";
 
@@ -53,7 +55,10 @@ router.get("/complaints/resolved", getResolvedComplaints);
 // Update complaint status
 router.put("/complaints/:id", updateComplaintStatus);
 
+//vacant rooms
+router.get("/vacant-rooms", getVacantRooms);
 
+router.put("/assign-room", assignRoomToStudent);
 
 // Announcement Routes,
 
