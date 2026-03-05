@@ -284,11 +284,11 @@ export default function Dashboard() {
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 group">
               <div className="relative w-9 h-9">
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-900 to-indigo-700 shadow-md" />
+                <div className="absolute inset-0 rounded-xl bg-linear-to-br from-indigo-900 to-indigo-700 shadow-md" />
                 <span className="absolute inset-0 flex items-center justify-center text-white font-display font-bold text-base">H</span>
               </div>
               <div className="leading-none">
-                <div className={`font-display font-semibold text-sm tracking-wide transition-colors duration-300 ${scrolled ? "text-stone-900" : "text-white"}`}>
+                <div className={`font-display font-semibold text-m tracking-wide transition-colors duration-300 ${scrolled ? "text-stone-900" : "text-white"}`}>
                   HostelMS
                 </div>
                 <div className={`text-[9px] font-body font-semibold tracking-[0.18em] uppercase mt-0.5 transition-colors duration-300 ${scrolled ? "text-stone-400" : "text-white/45"}`}>
@@ -301,7 +301,7 @@ export default function Dashboard() {
             <div className="hidden md:flex items-center gap-7">
               {navLinks.map(link => (
                 <Link key={link.to} to={link.to}
-                  className={`nav-link-line font-body text-[13px] font-medium tracking-wide transition-colors duration-200 ${
+                  className={`nav-link-line font-body text-[16px] font-medium tracking-wide transition-colors duration-200 ${
                     scrolled ? "text-stone-500 hover:text-stone-900" : "text-white/65 hover:text-white"
                   }`}>
                   {link.label}
@@ -348,7 +348,7 @@ export default function Dashboard() {
           <div className="hero-overlay absolute inset-0" />
 
           {/* Left edge accent bar */}
-          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-indigo-400/60 to-transparent" />
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-transparent via-indigo-400/60 to-transparent" />
 
           <div className="relative z-10 max-w-6xl mx-auto px-8 pb-20 w-full">
             <div className="max-w-2xl">
@@ -356,7 +356,7 @@ export default function Dashboard() {
               {/* Eyebrow */}
               <div className="fade-up-1 flex items-center gap-3 mb-6">
                 <div className="w-8 h-px bg-indigo-400/70" />
-                <span className="text-indigo-300/90 font-body text-[11px] font-semibold tracking-[0.2em] uppercase">
+                <span className="text-indigo-100 font-body text-[11px] font-semibold tracking-[0.2em] uppercase">
                   Jabalpur Engineering College
                 </span>
               </div>
@@ -364,15 +364,15 @@ export default function Dashboard() {
               {/* Headline */}
               <h1 className="fade-up-2 font-display text-white leading-[1.05] mb-6"
                 style={{ fontSize: "clamp(42px, 6vw, 72px)", fontWeight: 600 }}>
-                Welcome to the
+                Welcome to
                 <br />
-                <em className="not-italic text-indigo-200">Hostel Management</em>
+                <em className="not-italic text-indigo-300">ChhatralayaConnect</em>
                 <br />
-                System
+              <span>Your Hostel Simplified.</span>
               </h1>
 
               {/* Subtitle */}
-              <p className="fade-up-3 font-body text-white/50 text-base leading-relaxed max-w-md mb-10">
+              <p className="fade-up-3 font-body text-white text-base leading-relaxed max-w-md mb-10">
                 A dedicated platform for JEC residents and staff — bringing clarity, ease, and transparency to every aspect of hostel life.
               </p>
 
@@ -392,7 +392,7 @@ export default function Dashboard() {
 
           {/* Scroll hint */}
           <div className="absolute bottom-8 right-8 flex flex-col items-center gap-2 opacity-30">
-            <div className="w-px h-10 bg-gradient-to-b from-white to-transparent" />
+            <div className="w-px h-10 bg-linear-to-b from-white to-transparent" />
             <span className="font-body text-white text-[9px] tracking-[0.2em] uppercase rotate-90 origin-center translate-x-3">Scroll</span>
           </div>
         </section>
@@ -512,7 +512,7 @@ export default function Dashboard() {
           {/* Background texture */}
           <div className="absolute inset-0 opacity-[0.04]"
             style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-400/40 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-indigo-400/40 to-transparent" />
 
           <div className="relative z-10 max-w-4xl mx-auto px-8 text-center">
             <p className="font-body text-indigo-400/70 text-[11px] font-semibold tracking-[0.2em] uppercase mb-5">Access Your Portal</p>
@@ -520,7 +520,7 @@ export default function Dashboard() {
               Ready to get started?
             </h2>
             <p className="font-body text-indigo-300/45 text-base leading-relaxed max-w-sm mx-auto mb-10">
-              Log in to access your personalised hostel dashboard and stay updated.
+              Log in to access your personalized hostel dashboard and stay updated.
             </p>
             <Link to="/login"
               className="inline-flex items-center gap-2.5 font-body bg-white text-indigo-900 hover:bg-indigo-50 px-8 py-3.5 rounded-xl text-[13px] font-bold tracking-widest uppercase shadow-2xl shadow-black/30 transition-all duration-300 hover:-translate-y-0.5">

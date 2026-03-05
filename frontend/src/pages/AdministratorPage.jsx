@@ -57,11 +57,19 @@
 import { useState, useEffect } from "react";
 import React from "react";
 import StaffCard from "../components/StaffCard";
+import warden1 from "../assets/Warden1.png";
+import warden2 from "../assets/Warden2.png";
+import warden3 from "../assets/Warden3.jpeg";
+import Caretaker from "../assets/caretaker.jpeg";
+
+
 
 const staffMembers = [
-  { name: "Loveleen Kaur",       designation: "Hostel-1 Warden",    email: "wardenA@hostel.com",    phone: "+91 9876543210", imageUrl: "/images/warden1.jpg"   },
-  { name: "Agya Mishra",       designation: "Hostel-1 Warden",    email: "wardenB@hostel.com",    phone: "+91 9876543211", imageUrl: "/images/warden2.jpg"   },
-  { name: "Rameshwari Pradhan",designation: "Hostel Caretaker", email: "caretaker@hostel.com",  phone: "+91 9876543212", imageUrl: "/images/caretaker.jpg" },
+  { name: "Agya Mishra",       designation: "Hostel-1 Warden",    email: "wardenA@hostel.com",    phone: "+91 9876543210", imageUrl:warden1   },
+    { name: "Lovleen Kaur", designation: "Hostel-1 Warden", email: "wardenB@hostel.com", phone: "+91 9876543211", imageUrl: warden2 },
+    { name: "Bhavna Godbole",       designation: "Hostel-1 Warden",    email: "wardenC@hostel.com",    phone: "+91 9876543211", imageUrl: warden3   },
+
+  { name: "Rameshwari Pradhan",designation: "Hostel Caretaker", email: "caretaker@hostel.com",  phone: "+91 9876543212", imageUrl: Caretaker },
 ];
 
 const stats = [
@@ -83,19 +91,19 @@ const AdministratorPage = () => {
     <div className="min-h-screen bg-slate-50 font-sans">
 
       {/* ── Hero Header ── */}
-      <div className="relative bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-10 pt-16 pb-14 overflow-hidden">
+      <div className="relative bg-linear-to-br from-slate-900 via-indigo-950 to-slate-900 px-10 pt-16 pb-14 overflow-hidden">
 
         {/* Decorative rings */}
-        <div className="absolute -top-16 -right-10 w-80 h-80 rounded-full border border-white/10 bg-white/[0.03] pointer-events-none" />
-        <div className="absolute top-8 right-52 w-40 h-40 rounded-full border border-white/[0.06] pointer-events-none" />
-        <div className="absolute -bottom-24 -left-14 w-64 h-64 rounded-full border border-white/[0.06] bg-white/[0.02] pointer-events-none" />
+        <div className="absolute -top-16 -right-10 w-80 h-80 rounded-full border border-white/10 bg-white/3 pointer-events-none" />
+        <div className="absolute top-8 right-52 w-40 h-40 rounded-full border border-white/6 pointer-events-none" />
+        <div className="absolute -bottom-24 -left-14 w-64 h-64 rounded-full border border-white/6 bg-white/2 pointer-events-none" />
 
         <div className="max-w-5xl mx-auto relative z-10">
 
           {/* Eyebrow */}
           <div className={`inline-flex items-center gap-2 bg-white/[0.07] border border-white/10 rounded-full px-4 py-1.5 mb-6 transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
             <span className="text-base">🏛️</span>
-            <span className="text-white/70 text-[11px] font-bold tracking-[0.1em] uppercase">Administration</span>
+            <span className="text-white/70 text-[11px] font-bold tracking-widest uppercase">Administration</span>
           </div>
 
           {/* Title */}
@@ -137,7 +145,7 @@ const AdministratorPage = () => {
 
         {/* Section label */}
         <div className="flex items-center gap-3 mb-10">
-          <div className="w-6 h-0.5 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500" />
+          <div className="w-6 h-0.5 rounded-full bg-linear-to-r from-indigo-500 to-violet-500" />
           <span className="text-[11px] font-bold text-slate-400 tracking-[0.12em] uppercase">
             Meet the Team — {staffMembers.length} members
           </span>
