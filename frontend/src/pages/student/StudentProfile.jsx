@@ -503,8 +503,32 @@ const StudentProfile = () => {
     try {
       await API.put("/students/profile", profile);
       setMessage("Profile updated successfully!");
+      await fetchProfile();
     } catch (err) { setError("Failed to update profile"); }
   };
+
+  if (!profile) return (
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100vh", background:"#f8fafc", gap:16 }}>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <div style={{ width:44, height:44, borderRadius:"50%", border:"3px solid #e2e8f0", borderTopColor:"#6366f1", animation:"spin 0.8s linear infinite" }} />
+      <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:14, color:"#94a3b8", fontWeight:500 }}>Loading your profile...</p>
+    </div>
+  );
+
+  // ✅ Lock form if all key fields are already filled
+  const isProfileComplete = !!(
+    profile?.contact &&
+    profile?.parentName &&
+    profile?.permanentAddress &&
+    profile?.parentNumber &&
+    profile?.LgName &&
+    profile?.LgNumber &&
+    profile?.LgAddress
+  );
+
+  const initials = profile.name
+    ? profile.name.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase()
+    : "?";
 
   // ── NEW: profile picture upload ──────────────────────────────
   const handlePicUpload = async (e) => {
@@ -528,17 +552,7 @@ const StudentProfile = () => {
   };
   // ────────────────────────────────────────────────────────────
 
-  if (!profile) return (
-    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100vh", background:"#f8fafc", gap:16 }}>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-      <div style={{ width:44, height:44, borderRadius:"50%", border:"3px solid #e2e8f0", borderTopColor:"#6366f1", animation:"spin 0.8s linear infinite" }} />
-      <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:14, color:"#94a3b8", fontWeight:500 }}>Loading your profile...</p>
-    </div>
-  );
-
-  const initials = profile.name
-    ? profile.name.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase()
-    : "?";
+ 
 
   return (
     <StudentLayout>
